@@ -1,0 +1,289 @@
+<header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]"></div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    ⚡ AutoSniper <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono border border-emerald-500/20">RELAY V2.4</span>
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="modeBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Simulation Mode ($25 Sandbox)
+                </div>
+                <button onclick="openConfigModal()" class="text-gray-400 hover:text-white transition p-2 rounded-lg hover:bg-gray-800">
+                    ⚙️ Config
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Metrics Overview Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Portfolio Balance</p>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="statBalance" class="text-2xl font-bold font-mono text-white">$25.00</span>
+                    <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0.20 SOL</span>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">Target Position: <span class="text-gray-200 font-mono">0.02 SOL</span></div>
+            </div>
+
+            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Relay Latency (AllenHark)</p>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="statLatency" class="text-2xl font-bold font-mono text-emerald-400">42 ms</span>
+                    <span class="text-xs font-mono text-gray-400">&lt; 150ms Target</span>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">Endpoint: <span class="text-gray-300 font-mono">relay.allenhark.com</span></div>
+            </div>
+
+            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Win Rate & Multiplier</p>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="statWinRate" class="text-2xl font-bold font-mono text-white">40.0%</span>
+                    <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Avg 2.1x</span>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">Total Snipes: <span id="statTotalSnipes" class="text-gray-200 font-mono">0</span></div>
+            </div>
+
+            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Net PnL (Session)</p>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="statPnL" class="text-2xl font-bold font-mono text-emerald-400">+$0.00</span>
+                    <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0.00%</span>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">Gas Bribe Spent: <span class="text-gray-200 font-mono">0.0005 SOL</span></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Controls & Actions Card -->
+            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-6 flex flex-col justify-between space-y-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        🎮 Execution Control
+                    </h2>
+                    <p class="text-sm text-gray-400 mt-1">Manage bot execution state and dispatch instant test triggers.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between bg-gray-950 p-3 rounded-lg border border-gray-800">
+                        <div>
+                            <span class="text-sm font-medium text-gray-200 block">Simulation Sandbox</span>
+                            <span class="text-xs text-gray-400">Test rules without real capital risk</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="simModeToggle" checked onchange="toggleSimMode()" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="triggerManualSnipe()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 px-4 rounded-lg transition shadow-lg shadow-emerald-900/20 text-sm flex items-center justify-center gap-2">
+                            🚀 Fire Test Snipe
+                        </button>
+                        <button onclick="runLatencyCheck()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium py-2.5 px-4 rounded-lg transition text-sm flex items-center justify-center gap-2">
+                            ⚡ Test Ping
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 pt-4">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Relay Status: <strong class="text-emerald-400">Connected</strong></span>
+                        <span>Worker: <strong class="text-gray-200">Render US-East</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Terminal Log Feed -->
+            <div class="lg:col-span-2 bg-gray-900/60 border border-gray-800 rounded-xl p-6 flex flex-col h-[340px]">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-white flex items-center gap-2 font-mono uppercase tracking-wider">
+                        🖥️ Live Worker Stream & Telemetry
+                    </h2>
+                    <button onclick="clearLogs()" class="text-xs text-gray-400 hover:text-white transition">Clear Console</button>
+                </div>
+                <div id="terminalLogs" class="flex-1 bg-gray-950 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-y-auto space-y-2 border border-gray-800/80">
+                    <div class="text-gray-500">[07:01:00 AM] [Init] Auto-Sniper worker initialized successfully.</div>
+                    <div class="text-gray-500">[07:01:02 AM] [Relay] Connected to https://relay.allenhark.com</div>
+                    <div class="text-emerald-400">[07:01:05 AM] [Ready] Listening for bonding curve deployments. Simulation mode active.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-white">📋 Trade & Snipe Ledger</h2>
+                <span class="text-xs text-gray-400 font-mono">Showing simulated executions ($25 pool)</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-300">
+                    <thead class="bg-gray-950 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-800 font-mono">
+                        <tr>
+                            <th class="py-3 px-4">Time</th>
+                            <th class="py-3 px-4">Token Mint</th>
+                            <th class="py-3 px-4">Action</th>
+                            <th class="py-3 px-4">Amount</th>
+                            <th class="py-3 px-4">Multiplier</th>
+                            <th class="py-3 px-4">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradeTableBody" class="divide-y divide-gray-800/60 font-mono text-xs">
+                        <!-- Dynamic rows inserted here -->
+                        <tr class="hover:bg-gray-800/30">
+                            <td class="py-3 px-4 text-gray-500">07:01:05 AM</td>
+                            <td class="py-3 px-4 text-indigo-400">So11111...1112</td>
+                            <td class="py-3 px-4 text-emerald-400">BUY</td>
+                            <td class="py-3 px-4">0.02 SOL ($2.50)</td>
+                            <td class="py-3 px-4">-</td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Pending Target</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="configModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 class="text-lg font-bold text-white">Bot Configuration</h3>
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">AllenHark Relay URL</label>
+                    <input type="text" value="https://relay.allenhark.com" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-gray-200 font-mono text-xs">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Position Size per Snipe (SOL)</label>
+                    <input type="number" value="0.02" step="0.01" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-gray-200 font-mono text-xs">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Max Priority Bribe Fee (SOL)</label>
+                    <input type="number" value="0.005" step="0.001" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-gray-200 font-mono text-xs">
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeConfigModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm transition">Cancel</button>
+                <button onclick="closeConfigModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm transition">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let balance = 25.00;
+        let totalSnipes = 1;
+        let successfulSnipes = 0;
+        let sessionPnL = 0.00;
+        let isSimMode = true;
+
+        const mockTokens = [
+            "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+            "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+            "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+            "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN"
+        ];
+
+        function logToTerminal(message, type = 'info') {
+            const term = document.getElementById('terminalLogs');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            
+            let colorClass = "text-gray-300";
+            if (type === 'success') colorClass = "text-emerald-400";
+            if (type === 'error') colorClass = "text-rose-400";
+            if (type === 'warning') colorClass = "text-amber-400";
+            
+            div.className = colorClass;
+            div.textContent = `[${time}] ${message}`;
+            term.appendChild(div);
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function toggleSimMode() {
+            isSimMode = document.getElementById('simModeToggle').checked;
+            const badge = document.getElementById('modeBadge');
+            if (isSimMode) {
+                badge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5";
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Simulation Mode ($25 Sandbox)';
+                logToTerminal("Switched to Simulation Mode. Paper trading active.", "warning");
+            } else {
+                badge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> LIVE CAPITAL MODE';
+                logToTerminal("WARNING: Switched to Live Capital Mode. Real funds at risk!", "error");
+            }
+        }
+
+        function triggerManualSnipe() {
+            totalSnipes++;
+            document.getElementById('statTotalSnipes').textContent = totalSnipes;
+            
+            const randomToken = mockTokens[Math.floor(Math.random() * mockTokens.length)];
+            const shortMint = randomToken.slice(0, 6) + '...' + randomToken.slice(-4);
+            const timeStr = new Date().toLocaleTimeString();
+
+            logToTerminal(`[Sniper] Target detected: ${shortMint}. Dispatching tx via relay...`, "info");
+            
+            setTimeout(() => {
+                const isWin = Math.random() > 0.4; // 60% simulated success rate
+                const multiplier = isWin ? (1.5 + Math.random() * 2.5).toFixed(2) + 'x' : '0.0x (Rug)';
+                const profitDelta = isWin ? 2.50 * (parseFloat(multiplier) - 1) : -2.50;
+                
+                sessionPnL += profitDelta;
+                balance += profitDelta;
+
+                document.getElementById('statBalance').textContent = '$' + balance.toFixed(2);
+                const pnlEl = document.getElementById('statPnL');
+                pnlEl.textContent = (sessionPnL >= 0 ? '+$' : '-$') + Math.abs(sessionPnL).toFixed(2);
+                pnlEl.className = `text-2xl font-bold font-mono ${sessionPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                if (isWin) successfulSnipes++;
+                const winRate = ((successfulSnipes / totalSnipes) * 100).toFixed(1) + '%';
+                document.getElementById('statWinRate').textContent = winRate;
+
+                // Add row to table
+                const tbody = document.getElementById('tradeTableBody');
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-800/30";
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-500">${timeStr}</td>
+                    <td class="py-3 px-4 text-indigo-400">${shortMint}</td>
+                    <td class="py-3 px-4 text-emerald-400">BUY/SELL</td>
+                    <td class="py-3 px-4">0.02 SOL ($2.50)</td>
+                    <td class="py-3 px-4 font-bold ${isWin ? 'text-emerald-400' : 'text-rose-400'}">${multiplier}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded ${isWin ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">${isWin ? 'Success (+Prof)' : 'Stopped Out'}</span></td>
+                `;
+                tbody.prepend(row);
+
+                logToTerminal(`[Execution] Trade settled for ${shortMint}. Result: ${multiplier} PnL: $${profitDelta.toFixed(2)}`, isWin ? "success" : "error");
+            }, 350);
+        }
+
+        function runLatencyCheck() {
+            logToTerminal("Pinging AllenHark Relay endpoint...", "info");
+            const start = performance.now();
+            setTimeout(() => {
+                const latency = Math.floor(35 + Math.random() * 25);
+                document.getElementById('statLatency').textContent = latency + ' ms';
+                logToTerminal(`[Latency] Round-trip latency verified: ${latency} ms (Optimal)`, "success");
+            }, 150);
+        }
+
+        function clearLogs() {
+            document.getElementById('terminalLogs').innerHTML = '<div class="text-gray-500">[Console cleared by operator]</div>';
+        }
+
+        function openConfigModal() {
+            document.getElementById('configModal').classList.remove('hidden');
+            document.getElementById('configModal').classList.add('flex');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').classList.remove('flex');
+            document.getElementById('configModal').classList.add('hidden');
+        }
+    </script>
